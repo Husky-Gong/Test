@@ -48,7 +48,7 @@
                 name : 包名
                 此时 所有指定的包下面的类的别名就是默认的类名
         -->
-        <package name="com.sxt.pojo"/>
+        <package name="com.com.zx.pojo"/>
     </typeAliases>
     <!-- 插件 -->
     <!--  分页插件 -->
