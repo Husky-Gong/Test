@@ -8,15 +8,15 @@
         1. 映射的文件的namespace值 要是 接口的全路径名称  表示这个映射文件 与 该接口绑定
         2. 映射中文件中命令的ID 值要和对应的接口中方法名一致  参数无关
 -->
-<mapper namespace="com.com.zx.dao.IUserDao">
+<mapper namespace="com.zx.dao.IUserDao">
      <!--
         注意 此时 id 值 与 接口中的方法名一致    必须一致
     -->
-    <select id="selectUser" resultType="com.com.zx.pojo.User">
+    <select id="selectUser" resultType="com.zx.pojo.User">
         select id,name,age,sex from user where id = #{id}
     </select>
 
-    <select id="selectAdd" resultType="com.com.zx.pojo.User">
+    <select id="selectAll" resultType="com.zx.pojo.User">
         select id,name,age,sex from user
     </select>
 
