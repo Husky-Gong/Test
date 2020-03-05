@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--
+        configuration:包含以下节点
+            properties : 引入 properties 数据配置文件  可以使用 获取值
+                resource : 使用相对路径  获取配置文件  一般都是使用 resource
+                url:指定路径读取文件  文件路径 绝对路径
+            settings: 设置 对整个mybatis环境进行相关配置
+                    cacheEnabled : 是否使用缓存   默认是true
+                    logImpl: 指定日志具体实现  可以不配置  因为mybatis 默认会自动查找。
+                            注意 如果存在多个日志包 则可以指定自己想使用
+            typeAliases: 配置类型别名
+                    方式两种  1.为类精确指定别名  2.为包下面的类都指定别名  默认类名
+            typeHandlers: 类型处理 mybatis  进行数据库类型和Java兼容的类型处理。
+            plugins : mybatis支持 拔插式的扩展。如果需要则插入这段程序，不需则移除这段程序。
+                       mybtais 提供了一个Intercepter接口 可以程序进行拦截处理 ，从而达到不修改其他代码
+                       但是能够进行扩展的功能
+            environments : mybatis 进行数据操作的具体数据源环境
+
+            databaseIdProvider : 数据库厂商标识  尽量写通用sql语句  避免切换数据库 程序不兼容
+            mappers: 映射文件
+    -->
+    <!-- 引入 jdbc的连接配置文件 -->
+    <properties resource="jdbc.properties"/>
+    <!-- 全局设置 -->
+    <settings>
+        <!-- 是否开启缓存  默认是true -->
+        <setting name="cacheEnabled" value="false"/>
+        <!-- 配置日志实现类  不配置会自动查找 -->
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <!--
+        类型别名 :
+            在mybatis中，一般使用type表示类。而一个类具体的是由 包名.类名组成。可能会多处被使用。名字相对较长,麻烦.
+
+     -->
+    <typeAliases>
+        <!--
+            1. 为类精确的指定别名
+            如下:此时 可以使用  ergou 代替 com.sxt.pojo.User
+        -->
+        <!-- <typeAlias type="com.sxt.pojo.User" alias="ergou"></typeAlias>-->
+        <!--
+            2. 为整个包下的类都指定别名
+                name : 包名
+                此时 所有指定的包下面的类的别名就是默认的类名
+        -->
+        <package name="com.zx.pojo"/>
+    </typeAliases>
+    <!-- 插件 -->
+    <!--  分页插件 -->
+    <plugins>
+        <!-- 配置具体的插件 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+    <!-- mybatis核心配置文件 -->
+    <!-- default 表示使用的数据源  可以通过修改 default的值切换具体的数据源环境
+       这样就不需要修改具体的详细的配置  相对灵活
+    -->
+    <environments default="DEV">
+        <!--
+            environment : 每一个 environment 都是一个具体的环境  使用ID 区分
+         -->
+        <environment id="DEV">
+            <!--
+                transactionManager : 事务类型
+                    JDBC : 使用JDBC的提交或回滚事务  推荐使用
+                    MANAGED : 不使用事务
+            -->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--
+                dataSource : 数据源
+                    type: 连接池类型
+                        POOLED : 表示使用连接池   推荐
+                        UNPOOLED: 不使用连接池
+                        JNDI: 本地化的连接  针对应用服务器  已经被淘汰了。将数据源配置 配置在服务器中
+            -->
+            <dataSource type="POOLED">
+                <!--
+                    以下数据库连接的属性  可以直接赋值  也可以通过表达式 从properties 配置文件中获取
+                    如果需要从properties配置文件获取  首先需要引入配置文件
+                 -->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <!-- 测试数据库环境 -->
+        <environment id="TEST">
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="POOLED">
+                <!--
+                    以下数据库连接的属性  可以直接赋值  也可以通过表达式 从properties 配置文件中获取
+                    如果需要从properties配置文件获取  首先需要引入配置文件
+                 -->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--
+        在实际开发中  尽量写通用的sql语句  这样避免切换数据库时  出现sql语句不兼容
+    -->
+    <!-- 引入 mapper配置文件 -->
+    <mappers>
+        <!-- 相对路径 -->
+        <!-- 实际开发中  推荐使用  resource  因为相对而言 类文件和配置文件是分开  -->
+        <mapper resource="mapper/UserMapper.xml"/>
+        <!-- <mapper resource="mapper/*Mapper.xml"  />-->
+
+        <!-- 使用绝对路径 -->
+        <!--  <mapper url="file:///var/mappers/AuthorMapper.xml"/>-->
+        <!-- 使用完全限定类型  此时 xml 配置要写在同一个包下面-->
+        <!-- <mapper class="org.mybatis.builder.AuthorMapper"/>-->
+        <!-- 将整个包下面的注册为映射值 -->
+        <!--<package name="org.mybatis.builder"/>-->
+    </mappers>
+
+</configuration>
